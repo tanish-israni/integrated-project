@@ -1,0 +1,11 @@
+Industry Standards:
+
+Gross Margin Threshold: High-margin retail categories are defined as having a gross margin >40%.
+
+High-Margin Sectors: Focus on specialized niche electronics, premium skincare, and health-tech wearables.
+
+Low-Margin/High-Volume Sectors: Avoid (or apply cost-minimization logic to) commodity grocery and basic apparel, where margins are typically <15%.
+
+Key Financial Metric: Always prioritize "Inventory Turnover Ratio." If a product has a margin <20% and an inventory turnover <3, it is flagged as a "Distressed Asset."
+
+Research Directive: When searching, if a product category shows a gross margin below 30%, look for "Value-Add SaaS" or "Service-bundled" opportunities to increase potential profitability.

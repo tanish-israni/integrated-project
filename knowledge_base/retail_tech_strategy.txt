@@ -1,0 +1,17 @@
+Strategic Framework:
+
+Omnichannel Efficacy: Successful retailers utilize an 80/20 split (80% online engagement, 20% physical experiential store).
+
+AI Agent Deployment: Modern retailers are implementing autonomous agents for inventory management and customer support to reduce CAC (Customer Acquisition Cost) by 25%.
+
+Trusted Research Sources: When performing web research, prioritize data from:
+
+Gartner Research (Retail Tech sector)
+
+McKinsey Retail & Consumer Goods reports
+
+Statista (Market size data)
+
+SEC Filings of major retail public companies (for margin verification)
+
+Research Directive: If a website is a generic blog, treat the information as "Weak Signal." If the domain is a credible industry research firm (like those listed above), treat it as "Ground Truth" for your synthesis.

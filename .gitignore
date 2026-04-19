@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.streamlit/
+streamlit.out.log
+streamlit.err.log
+Agentic_AI_Project_shareable.zip
+internal_repository/
