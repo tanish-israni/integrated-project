@@ -4,8 +4,10 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-.streamlit/
+.streamlit/*
+!.streamlit/config.toml
 streamlit.out.log
 streamlit.err.log
 Agentic_AI_Project_shareable.zip
 internal_repository/
+vector_store/
