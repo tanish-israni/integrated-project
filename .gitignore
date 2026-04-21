@@ -8,6 +8,9 @@ __pycache__/
 !.streamlit/config.toml
 streamlit.out.log
 streamlit.err.log
+app_runtime.log
 Agentic_AI_Project_shareable.zip
 internal_repository/
-vector_store/
+vector_store/*
+!vector_store/.gitkeep
+!vector_store/README.md

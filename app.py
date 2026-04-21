@@ -29,93 +29,120 @@ from reportlab.platypus import Image, PageBreak, Paragraph, SimpleDocTemplate, S
 
 load_dotenv()
 
-APP_TITLE = "Autonomous Retail Research Agent (v2)"
+APP_TITLE = "Retail Research Agent"
 ROOT_DIR = Path(__file__).resolve().parent
 KNOWLEDGE_BASE_DIR = ROOT_DIR / "knowledge_base"
 INTERNAL_REPOSITORY_DIR = ROOT_DIR / "internal_repository"
 VECTOR_STORE_DIR = ROOT_DIR / "vector_store"
+APP_LOG_PATH = ROOT_DIR / "app_runtime.log"
 REPORT_CSS = """
 <style>
 section[data-testid="stMain"] {
-    background:
-        radial-gradient(circle at top left, rgba(250, 204, 21, 0.16), transparent 28%),
-        radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 32%),
-        linear-gradient(180deg, #fcfaf5 0%, #f7f2e7 100%);
+    background: #f6f7f9;
 }
 .block-container {
-    max-width: 1280px;
-    padding-top: 2rem;
+    max-width: 1120px;
+    padding-top: 1.4rem;
     padding-bottom: 2rem;
 }
 .hero-shell {
-    background: linear-gradient(135deg, rgba(23, 49, 62, 0.98) 0%, rgba(124, 45, 18, 0.95) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 28px;
-    padding: 1.9rem 2rem 1.7rem 2rem;
-    box-shadow: 0 18px 44px rgba(23, 49, 62, 0.2);
-    color: #fff7ed;
-    margin-bottom: 1.2rem;
+    background: #ffffff;
+    border: 1px solid #dde3ea;
+    border-radius: 18px;
+    padding: 1.35rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    color: #0f172a;
+    margin-bottom: 1rem;
 }
 .hero-label {
     display: inline-block;
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #fed7aa;
-    margin-bottom: 0.8rem;
+    color: #475569;
+    margin-bottom: 0.45rem;
 }
 .hero-title {
-    font-size: 2.3rem;
+    font-size: 2rem;
     font-weight: 800;
-    line-height: 1.05;
-    margin-bottom: 0.8rem;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
 }
 .hero-copy {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: #ffedd5;
-    max-width: 860px;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: #475569;
+    max-width: 760px;
 }
 .status-card {
-    background: linear-gradient(180deg, rgba(255, 253, 247, 0.98) 0%, rgba(255, 248, 238, 0.98) 100%);
-    border: 1px solid #eadbc8;
-    border-radius: 22px;
-    padding: 1rem 1rem 0.9rem 1rem;
-    box-shadow: 0 10px 24px rgba(101, 67, 33, 0.08);
-    min-height: 150px;
+    background: #ffffff;
+    border: 1px solid #dde3ea;
+    border-radius: 16px;
+    padding: 0.95rem 1rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    min-height: 132px;
 }
 .status-label {
     font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #9a3412;
+    letter-spacing: 0.06em;
+    color: #64748b;
     margin-bottom: 0.45rem;
 }
 .status-value {
-    font-size: 1.9rem;
+    font-size: 1.65rem;
     font-weight: 800;
-    color: #17313e;
+    color: #0f172a;
     margin-bottom: 0.35rem;
 }
 .status-copy {
-    color: #5b4636;
-    line-height: 1.55;
-    font-size: 0.96rem;
+    color: #475569;
+    line-height: 1.5;
+    font-size: 0.92rem;
 }
 .workspace-shell {
-    background: rgba(255, 252, 246, 0.94);
-    border: 1px solid #eadbc8;
-    border-radius: 24px;
-    padding: 1.35rem 1.25rem;
-    box-shadow: 0 10px 26px rgba(101, 67, 33, 0.08);
+    background: #ffffff;
+    border: 1px solid #dde3ea;
+    border-radius: 18px;
+    padding: 1.1rem 1.1rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    margin-top: 0.9rem;
+    margin-bottom: 1rem;
+}
+.activity-shell {
+    background: #ffffff;
+    border: 1px solid #dde3ea;
+    border-radius: 18px;
+    padding: 1rem 1rem 0.8rem 1rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
     margin-top: 1rem;
     margin-bottom: 1rem;
+}
+.insight-strip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.8rem 0.9rem;
+    margin-top: 0.9rem;
+}
+.insight-title {
+    color: #334155;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35rem;
+}
+.insight-copy {
+    color: #475569;
+    line-height: 1.5;
+    font-size: 0.92rem;
 }
 .section-chip {
     display: inline-block;
     padding: 0.32rem 0.65rem;
-    background: #ffedd5;
-    color: #9a3412;
+    background: #e2e8f0;
+    color: #334155;
     border-radius: 999px;
     font-size: 0.76rem;
     font-weight: 700;
@@ -124,17 +151,18 @@ section[data-testid="stMain"] {
     margin-bottom: 0.7rem;
 }
 .download-shell {
-    background: linear-gradient(180deg, #fffdf7 0%, #fff8ee 100%);
-    border: 1px dashed #d6b893;
-    border-radius: 20px;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
     padding: 1rem;
     margin-top: 1rem;
 }
 div[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #17313e 0%, #1f3f4c 100%);
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
 }
 div[data-testid="stSidebar"] * {
-    color: #f8fafc;
+    color: #0f172a;
 }
 div[data-testid="stSidebar"] .stSelectbox label,
 div[data-testid="stSidebar"] .stButton button,
@@ -144,35 +172,61 @@ div[data-testid="stSidebar"] .stInfo {
     color: inherit;
 }
 div[data-testid="stTextInput"] input {
-    border-radius: 16px;
-    border: 1px solid #d6b893;
-    background: rgba(255, 252, 246, 0.94);
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
     padding: 0.75rem 0.9rem;
 }
 div[data-testid="stButton"] button,
 div[data-testid="stDownloadButton"] button {
-    border-radius: 16px;
-    border: 0;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
     font-weight: 700;
-    box-shadow: 0 8px 22px rgba(124, 45, 18, 0.18);
+    box-shadow: none;
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+div[data-testid="stButton"] button *,
+div[data-testid="stDownloadButton"] button * {
+    color: #0f172a !important;
+    fill: #0f172a !important;
 }
 div[data-testid="stButton"] button[kind="primary"] {
-    background: linear-gradient(135deg, #f97316 0%, #b45309 100%);
-    color: white;
+    background: #ffffff !important;
+    color: #0f172a !important;
 }
 div[data-testid="stDownloadButton"] button {
-    background: linear-gradient(135deg, #17313e 0%, #244d5e 100%);
-    color: white;
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+div[data-testid="stButton"] button:hover,
+div[data-testid="stButton"] button:focus,
+div[data-testid="stDownloadButton"] button:hover,
+div[data-testid="stDownloadButton"] button:focus {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+div[data-testid="stButton"] button:hover *,
+div[data-testid="stButton"] button:focus *,
+div[data-testid="stDownloadButton"] button:hover *,
+div[data-testid="stDownloadButton"] button:focus * {
+    color: #0f172a !important;
+    fill: #0f172a !important;
 }
 div[data-testid="stTable"] {
-    background: rgba(255, 252, 246, 0.85);
-    border-radius: 18px;
+    background: #f8fafc;
+    border-radius: 14px;
     padding: 0.4rem;
+}
+div[data-testid="stCodeBlock"] pre {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    border-radius: 12px;
 }
 div[data-testid="stMarkdownContainer"] h1,
 div[data-testid="stMarkdownContainer"] h2,
 div[data-testid="stMarkdownContainer"] h3 {
-    color: #7c2d12;
+    color: #0f172a;
     letter-spacing: normal;
     word-spacing: normal;
     line-height: 1.25;
@@ -181,7 +235,7 @@ div[data-testid="stMarkdownContainer"] h1 {
     margin-top: 0.2rem;
     margin-bottom: 1rem;
     padding-bottom: 0.6rem;
-    border-bottom: 2px solid #f6b26b;
+    border-bottom: 2px solid #e2e8f0;
 }
 div[data-testid="stMarkdownContainer"] h2 {
     margin-top: 1.5rem;
@@ -189,14 +243,14 @@ div[data-testid="stMarkdownContainer"] h2 {
 }
 div[data-testid="stMarkdownContainer"] p,
 div[data-testid="stMarkdownContainer"] li {
-    color: #2f2a24;
-    line-height: 1.7;
+    color: #1e293b;
+    line-height: 1.65;
     letter-spacing: normal;
     word-spacing: normal;
     text-align: left;
 }
 div[data-testid="stMarkdownContainer"] strong {
-    color: #17313e;
+    color: #0f172a;
     letter-spacing: normal;
     word-spacing: normal;
 }
@@ -206,13 +260,13 @@ div[data-testid="stMarkdownContainer"] table {
     margin: 1rem 0 1.4rem 0;
 }
 div[data-testid="stMarkdownContainer"] th {
-    background: #17313e;
+    background: #0f172a;
     color: #fff;
     padding: 0.7rem;
     text-align: left;
 }
 div[data-testid="stMarkdownContainer"] td {
-    border: 1px solid #e7d8c9;
+    border: 1px solid #e2e8f0;
     padding: 0.7rem;
 }
 </style>
@@ -298,21 +352,26 @@ class StorageService:
 
 
 class StreamlitLogger:
-    def __init__(self, placeholder) -> None:
+    def __init__(self, placeholder=None) -> None:
         self.placeholder = placeholder
 
     def reset(self) -> None:
         st.session_state.agent_logs = []
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with APP_LOG_PATH.open("a", encoding="utf-8") as log_file:
+            log_file.write(f"\n===== Run started at {timestamp} =====\n")
         self.render()
 
     def write(self, message: str) -> None:
         timestamp = datetime.now().strftime("%H:%M:%S")
-        st.session_state.agent_logs.append(f"[{timestamp}] {message}")
+        entry = f"[{timestamp}] {message}"
+        st.session_state.agent_logs.append(entry)
+        with APP_LOG_PATH.open("a", encoding="utf-8") as log_file:
+            log_file.write(entry + "\n")
         self.render()
 
     def render(self) -> None:
-        logs = st.session_state.get("agent_logs", [])
-        self.placeholder.code("\n".join(logs) if logs else "Waiting for a run...", language="text")
+        return
 
     def step_callback(self, step_output) -> None:
         message = self._extract_step_message(step_output)
@@ -463,6 +522,9 @@ class VectorDatabaseService:
         self.collection_name = "retail_research_memory"
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=900, chunk_overlap=120)
 
+    def has_store(self) -> bool:
+        return self.persist_dir.exists() and any(path.is_file() for path in self.persist_dir.rglob("*"))
+
     def _load_directory_documents(self, directory: Path) -> List:
         directory.mkdir(parents=True, exist_ok=True)
         documents = []
@@ -492,7 +554,10 @@ class VectorDatabaseService:
         return knowledge_documents + report_documents
 
     def _build_embeddings(self):
-        provider = os.getenv("MODEL_PROVIDER", "openai").strip().lower()
+        provider = os.getenv("EMBEDDING_PROVIDER", "").strip().lower()
+        if not provider:
+            provider = "gemini" if os.getenv("GOOGLE_API_KEY") else "openai"
+
         if provider == "gemini":
             return GoogleGenerativeAIEmbeddings(
                 model="models/gemini-embedding-001",
@@ -511,7 +576,12 @@ class VectorDatabaseService:
             )
 
         if self.persist_dir.exists():
-            shutil.rmtree(self.persist_dir)
+            try:
+                shutil.rmtree(self.persist_dir)
+            except PermissionError:
+                if logger:
+                    logger.write("Vector database files are currently in use. Keeping the existing database for this run.")
+                return
         self.persist_dir.mkdir(parents=True, exist_ok=True)
 
         if not documents:
@@ -557,11 +627,10 @@ def render_hero() -> None:
     st.markdown(
         """
         <div class="hero-shell">
-            <div class="hero-label">Autonomous Intelligence Workspace</div>
-            <div class="hero-title">Autonomous Retail Research Agent</div>
+            <div class="hero-label">Agentic AI Project</div>
+            <div class="hero-title">Retail Research Agent</div>
             <div class="hero-copy">
-                A polished retail intelligence studio that combines live market research, curated internal frameworks,
-                vector-memory retrieval, and stakeholder-ready reporting in one Streamlit experience.
+                A simple workspace for live retail research, curated knowledge, vector database retrieval, and export-ready reports.
             </div>
         </div>
         """,
@@ -603,13 +672,25 @@ def validate_environment(provider: str) -> List[str]:
     if provider == "gemini":
         if not os.getenv("GOOGLE_API_KEY"):
             missing.append("GOOGLE_API_KEY")
+    elif provider == "groq":
+        if not os.getenv("GROQ_API_KEY"):
+            missing.append("GROQ_API_KEY")
     else:
         if not os.getenv("OPENAI_API_KEY"):
             missing.append("OPENAI_API_KEY")
 
+    embedding_provider = os.getenv("EMBEDDING_PROVIDER", "").strip().lower()
+    if not embedding_provider:
+        embedding_provider = "gemini" if os.getenv("GOOGLE_API_KEY") else "openai"
+
+    if embedding_provider == "gemini" and not os.getenv("GOOGLE_API_KEY"):
+        missing.append("GOOGLE_API_KEY")
+    if embedding_provider == "openai" and not os.getenv("OPENAI_API_KEY"):
+        missing.append("OPENAI_API_KEY")
+
     if not os.getenv("SERPER_API_KEY"):
         missing.append("SERPER_API_KEY")
-    return missing
+    return sorted(set(missing))
 
 
 def build_llm() -> LLM:
@@ -621,6 +702,13 @@ def build_llm() -> LLM:
             api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.2,
         )
+    if provider == "groq":
+        model_name = os.getenv("MODEL_NAME", "llama-3.1-8b-instant")
+        return LLM(
+            model=f"groq/{model_name}",
+            api_key=os.getenv("GROQ_API_KEY"),
+            temperature=0.2,
+        )
 
     model_name = os.getenv("MODEL_NAME", "gpt-4o")
     return LLM(
@@ -630,6 +718,13 @@ def build_llm() -> LLM:
     )
 
 
+def clip_text(text: str, max_chars: int) -> str:
+    cleaned = (text or "").strip()
+    if len(cleaned) <= max_chars:
+        return cleaned
+    return cleaned[:max_chars].rsplit(" ", 1)[0] + "\n...[truncated]"
+
+
 def build_retail_crew(
     query: str,
     knowledge_store: KnowledgeStore,
@@ -637,9 +732,11 @@ def build_retail_crew(
     logger: StreamlitLogger,
 ) -> Crew:
     llm = build_llm()
-    search_tool = SerperDevTool()
+    search_tool = SerperDevTool(n_results=2)
 
     knowledge_brief = knowledge_store.research_brief()
+    compact_knowledge_context = clip_text(knowledge_store.raw_context, 1200)
+    compact_retrieval_context = clip_text(retrieval_memory.context, 900)
     trusted_domains = ", ".join(knowledge_store.trusted_domains) if knowledge_store.trusted_domains else "No preferred domains available"
     trend_keywords = ", ".join(knowledge_store.trend_keywords) if knowledge_store.trend_keywords else "No trend keywords available"
     retrieval_sources = ", ".join(retrieval_memory.sources) if retrieval_memory.sources else "No retrieval sources available"
@@ -651,65 +748,67 @@ def build_retail_crew(
             "to find high-margin, high-confidence retail opportunities."
         ),
         backstory=(
-            "You are a seasoned retail strategy analyst. Before any web search, you must query the Knowledge_Store and extract "
-            "target profit margins, 2026 trend keywords, and trusted domains. You then search specifically with those signals, "
-            "cross-reference results against the knowledge base, use vector database memory from prior reports and source material when relevant, "
-            "and filter out weak signals from generic blogs.\n\n"
+            "You are a seasoned retail strategy analyst. Use the knowledge store as a compact benchmark, then do a small targeted web search. "
+            "Focus only on the strongest commercially relevant signals and ignore low-value detail.\n\n"
             f"{knowledge_brief}\n"
-            f"Full Knowledge Store Context:\n{knowledge_store.raw_context}\n\n"
+            f"Condensed Knowledge Store Context:\n{compact_knowledge_context}\n\n"
             f"Retrieved Vector Memory Sources: {retrieval_sources}\n"
-            f"Retrieved Vector Memory Context:\n{retrieval_memory.context}"
+            f"Retrieved Vector Memory Context:\n{compact_retrieval_context}"
         ),
         tools=[search_tool],
         llm=llm,
-        verbose=True,
+        verbose=False,
         step_callback=logger.step_callback,
+        max_iter=1,
+        respect_context_window=True,
     )
 
     writer = Agent(
         role="Report Writer",
         goal="Create a clean, professional Market Research Report in Markdown for stakeholders.",
         backstory=(
-            "You are a technical business writer. You convert the researcher's source-aware findings into a polished report "
-            "with strong visual structure. You always include an Executive Summary, H1/H2 headers, bullet lists, and a comparison table. "
-            "You may use retrieved memory from prior reports and knowledge sources as supporting context, but only when it improves clarity or continuity."
+            "You are a technical business writer. You convert the researcher's compact fact pack into a polished report "
+            "with strong visual structure. Expand only from the provided evidence, keep claims source-aware, and do not restate raw notes verbatim. "
+            "You always include an Executive Summary, H1/H2 headers, bullet lists, and a comparison table."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         step_callback=logger.step_callback,
+        max_iter=1,
+        respect_context_window=True,
     )
 
     research_task = Task(
         description=(
             f"User research query: {query}\n\n"
             "Mandatory workflow:\n"
-            "1. FIRST, perform a comprehensive web search for the user's query and gather real-time market data, notable brands, demand signals, and growth drivers.\n"
-            "2. Identify real-world trends, product categories, and commercial opportunities from current web evidence before applying any internal framework.\n"
-            "3. SECOND, cross-reference your findings against the Knowledge_Store and explicitly extract these benchmarks:\n"
+            "1. Perform a small targeted web search for the user's query and gather only the strongest market signals.\n"
+            "2. Identify product categories and commercial opportunities from current evidence before applying internal benchmarks.\n"
+            "3. Cross-reference your findings against the Knowledge_Store and extract these benchmarks:\n"
             "   - Target Profit Margins\n"
             "   - 2026 Trend Keywords\n"
             "   - Trusted Domain Lists\n"
-            f"4. Prioritize findings from these trusted domains when possible: {trusted_domains}\n"
-            f"5. Use these trend keywords as evaluation signals where relevant, not as hard filters: {trend_keywords}\n"
-            "6. If a trend matches the High-Margin or Growth criteria in the Knowledge_Store, highlight that alignment clearly.\n"
-            "7. If a trend is uniquely local or market-specific and supported by live web evidence, report it even if it is not explicitly mentioned in the Knowledge_Store.\n"
-            "8. Do not copy-paste from the Knowledge_Store. Use it only as a benchmark to validate, challenge, or contextualize your live search results.\n"
-            "9. If a source is a generic blog, mark it as Weak Signal. If a source is from a trusted industry research firm or sec.gov, treat it as Ground Truth.\n"
-            "10. Use the retrieved vector database memory as secondary context from prior reports and archived knowledge, but do not let it override live market evidence.\n"
-            "11. Include estimated margin logic, trend-fit notes, validation notes, source quality, and risks.\n\n"
-            "Return a structured research brief with these sections:\n"
-            "- Knowledge Store Extraction\n"
-            "- Vector Memory Insights\n"
-            "- Verified Opportunities\n"
-            "- India or Market-Specific Signals\n"
-            "- Weak Signals Rejected\n"
-            "- Margin and Trend Logic\n"
-            "- Validation Notes\n"
-            "- Trusted Sources Used"
+            f"4. Prefer these trusted domains when possible: {trusted_domains}\n"
+            f"5. Use these trend keywords as evaluation signals: {trend_keywords}\n"
+            "6. Keep the output compact. Do not write paragraphs. Use short bullets only.\n"
+            "7. Limit yourself to the top 3 opportunities and at most 1 rejected weak signal.\n\n"
+            "Return a compact fact pack using exactly this structure:\n"
+            "Knowledge Benchmarks:\n"
+            "- Margin Target: <short>\n"
+            "- Trend Keywords: <comma-separated short list>\n"
+            "- Trusted Domains: <comma-separated short list>\n\n"
+            "Vector Memory Signals:\n"
+            "- <max 1 short bullet>\n\n"
+            "Top Opportunities:\n"
+            "- Product: <name> | Margin: <percent> | Trend: <label> | Evidence: <one sentence with number if available> | Source: <domain/name> | Risk: <short>\n"
+            "- Repeat for at most 3 products\n\n"
+            "Weak Signals Rejected:\n"
+            "- <at most 1 short bullet>\n\n"
+            "Sources Used:\n"
+            "- <at most 3 short sources>"
         ),
         expected_output=(
-            "A detailed list of real-world trends and opportunities with a validation note for each one showing "
-            "how it aligns with, extends, or challenges the internal retail frameworks."
+            "A very small fact pack with short bullets, at most 3 opportunities, minimal memory notes, and at most 3 short source references."
         ),
         agent=researcher,
     )
@@ -721,16 +820,16 @@ def build_retail_crew(
             "Formatting requirements:\n"
             "- Start with exactly one H1 title\n"
             "- Include an 'Executive Summary' section at the top\n"
-            "- Use H2 headers for all major sections with a blank line between sections\n"
-            "- Use bulleted lists for insights and recommendations\n"
+            "- Use H2 headers for major sections\n"
+            "- Use short bullet lists for insights and recommendations\n"
             "- Include a comparison table with columns: Product Name | Est. Margin | Trend Alignment\n"
-            "- The comparison table is mandatory and must contain at least 4 rows\n"
+            "- The comparison table is mandatory and must contain exactly 3 rows\n"
             "- Est. Margin values must be numeric percentages like 42% or 38-45%\n"
             "- Trend Alignment values must be concise labels like Very High, High, Medium, or Low\n"
             "- Preserve source-aware nuance and distinguish Ground Truth from Weak Signal\n"
-            "- Avoid excessive bold formatting and do not stretch words with decorative spacing\n"
             "- End with a Sources section\n"
-            "- Ensure the final output renders cleanly in Streamlit markdown\n\n"
+            "- Ensure the final output renders cleanly in Streamlit markdown\n"
+            "- Use only the compact fact pack from the researcher as your evidence base and expand it into professional prose without inventing new facts\n\n"
             "Use this exact section order:\n"
             "# Market Research Report: <Title>\n"
             "## Executive Summary\n"
@@ -751,7 +850,7 @@ def build_retail_crew(
         agents=[researcher, writer],
         tasks=[research_task, report_task],
         process=Process.sequential,
-        verbose=True,
+        verbose=False,
     )
 
 
@@ -785,6 +884,32 @@ def parse_comparison_table(report_markdown: str) -> List[ComparisonRow]:
             )
         )
     return rows
+
+
+def remove_comparison_table_from_markdown(report_markdown: str) -> str:
+    lines = report_markdown.splitlines()
+    cleaned_lines: List[str] = []
+    in_table_block = False
+
+    for raw_line in lines:
+        stripped = raw_line.strip()
+        is_table_line = stripped.startswith("|")
+
+        if is_table_line:
+            in_table_block = True
+            continue
+
+        if in_table_block:
+            if stripped == "":
+                in_table_block = False
+                continue
+            in_table_block = False
+
+        cleaned_lines.append(raw_line)
+
+    cleaned_report = "\n".join(cleaned_lines)
+    cleaned_report = re.sub(r"\n{3,}", "\n\n", cleaned_report).strip()
+    return cleaned_report
 
 
 def parse_markdown_sections(report_markdown: str) -> List[tuple[str, List[str]]]:
@@ -1116,34 +1241,35 @@ def main() -> None:
     vector_service = VectorDatabaseService(KNOWLEDGE_BASE_DIR, INTERNAL_REPOSITORY_DIR, VECTOR_STORE_DIR)
     st.markdown(REPORT_CSS, unsafe_allow_html=True)
     render_hero()
+    logger = StreamlitLogger()
 
     with st.sidebar:
-        st.subheader("Agent Activity")
-        log_placeholder = st.empty()
-        logger = StreamlitLogger(log_placeholder)
-        logger.render()
+        st.subheader("Workspace")
+        st.caption("A focused research interface for generating retail market reports with curated internal guidance.")
 
         if st.session_state.knowledge_store is None:
             st.session_state.knowledge_store = ingest_knowledge_store(logger)
-            vector_service.rebuild(logger)
+            if not vector_service.has_store():
+                vector_service.rebuild(logger)
 
         st.divider()
-        st.subheader("Knowledge Store")
+        st.subheader("Knowledge Library")
         knowledge_store = st.session_state.knowledge_store
         if knowledge_store.source_names:
             st.markdown("\n".join(f"- {source}" for source in knowledge_store.source_names))
             if knowledge_store.trusted_domains:
-                st.caption(f"Trusted domains: {', '.join(knowledge_store.trusted_domains)}")
+                st.caption(f"Reference sources include: {', '.join(knowledge_store.trusted_domains)}")
         else:
             st.info("Add knowledge files to knowledge_base so the agents can operate like experienced retail analysts.")
 
         st.divider()
-        st.subheader("Vector Database")
-        if VECTOR_STORE_DIR.exists():
-            st.caption("Local vector database enabled for knowledge-base and previous-report retrieval.")
-        if st.button("Refresh Vector Database"):
+        st.subheader("Research Memory")
+        st.caption("Refresh the persisted vector database built from `knowledge_base` and saved reports.")
+        vector_file_count = len([path for path in VECTOR_STORE_DIR.rglob("*") if path.is_file()]) if VECTOR_STORE_DIR.exists() else 0
+        st.caption(f"Current vector database files: {vector_file_count}")
+        if st.button("Refresh Research Memory"):
             vector_service.rebuild(logger)
-            logger.write("Manual vector database refresh completed.")
+            logger.write("Research memory refresh completed.")
 
         st.divider()
         st.subheader("Stored Reports")
@@ -1168,19 +1294,19 @@ def main() -> None:
 
     knowledge_count = len(st.session_state.knowledge_store.source_names) if st.session_state.knowledge_store else 0
     saved_reports = sorted(INTERNAL_REPOSITORY_DIR.glob("retail_report_*.txt"), reverse=True)
-    vector_ready = "Ready" if VECTOR_STORE_DIR.exists() else "Pending"
+    vector_file_count = len([path for path in VECTOR_STORE_DIR.rglob("*") if path.is_file()]) if VECTOR_STORE_DIR.exists() else 0
     card_one, card_two, card_three = st.columns(3)
     render_status_card(
         card_one,
-        "Knowledge Base",
+        "Knowledge Library",
         str(knowledge_count),
         "Curated retail strategy files are loaded and available as expert heuristics.",
     )
     render_status_card(
         card_two,
-        "Vector Memory",
-        vector_ready,
-        "Persisted retrieval spans both knowledge-base content and previously generated reports.",
+        "Vector Database Files",
+        str(vector_file_count),
+        "Persisted Chroma files from curated documents and prior reports are available for retrieval.",
     )
     render_status_card(
         card_three,
@@ -1198,11 +1324,41 @@ def main() -> None:
     helper_left, helper_right = st.columns([3, 2])
     with helper_left:
         st.caption(
-            "Best results come from focused commercial questions such as category opportunities, pricing, margin signals, "
-            "or emerging D2C brands in a specific market."
+            "Use a focused query with a category, geography, or customer segment for better results."
         )
     with helper_right:
         run_clicked = st.button("Generate Report", type="primary", use_container_width=True)
+    insight_one, insight_two, insight_three = st.columns(3)
+    with insight_one:
+        st.markdown(
+            """
+            <div class="insight-strip">
+                <div class="insight-title">Market Focus</div>
+                <div class="insight-copy">Clear market scope improves the quality of recommendations.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with insight_two:
+        st.markdown(
+            """
+            <div class="insight-strip">
+                <div class="insight-title">Evidence Mix</div>
+                <div class="insight-copy">Live search, local knowledge, and vector retrieval are combined in each run.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with insight_three:
+        st.markdown(
+            """
+            <div class="insight-strip">
+                <div class="insight-title">Deliverables</div>
+                <div class="insight-copy">Each run can generate a report, comparison table, charts, and downloads.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     st.markdown("</div>", unsafe_allow_html=True)
 
     if run_clicked:
@@ -1212,7 +1368,8 @@ def main() -> None:
             logger.reset()
             try:
                 st.session_state.knowledge_store = ingest_knowledge_store(logger)
-                vector_service.rebuild(logger)
+                if not vector_service.has_store():
+                    vector_service.rebuild(logger)
                 st.session_state.retrieval_memory = vector_service.retrieve(query.strip())
                 with st.spinner("Agents are researching and drafting the report..."):
                     run_research(
@@ -1225,11 +1382,7 @@ def main() -> None:
                 st.success("Report generated successfully.")
             except Exception as error:
                 logger.write(f"Run failed: {error}")
-                st.error(str(error))
-
-    if st.session_state.latest_query:
-        st.markdown('<div class="section-chip">Active Query</div>', unsafe_allow_html=True)
-        st.markdown(f"### {st.session_state.latest_query}")
+                st.error("Report generation failed. Check app_runtime.log for details.")
 
     if st.session_state.latest_report:
         st.markdown('<div class="section-chip">Output Studio</div>', unsafe_allow_html=True)
@@ -1237,10 +1390,10 @@ def main() -> None:
 
         with report_tab:
             st.markdown("### Market Research Report")
-            if st.session_state.latest_summary_image_path and Path(st.session_state.latest_summary_image_path).exists():
-                st.image(st.session_state.latest_summary_image_path, use_container_width=True)
+            report_without_embedded_table = remove_comparison_table_from_markdown(st.session_state.latest_report)
+            st.markdown(report_without_embedded_table)
             if st.session_state.latest_comparison_rows:
-                st.markdown("#### Opportunity Comparison Table")
+                st.markdown("#### Opportunity Comparison")
                 table_data = [
                     {
                         "Product Name": row.product_name,
@@ -1250,9 +1403,6 @@ def main() -> None:
                     for row in st.session_state.latest_comparison_rows
                 ]
                 st.table(table_data)
-            else:
-                st.info("The model did not return a usable comparison table in this run, so charts may be limited.")
-            st.markdown(st.session_state.latest_report)
 
         with visuals_tab:
             st.markdown("### Report Visuals")

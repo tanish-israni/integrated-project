@@ -1,34 +1,44 @@
-# Autonomous Retail Research Agent
+# Retail Research Agent
 
-An AI-powered market research application built with Streamlit, CrewAI, and LangChain for generating structured retail intelligence reports from live web data and internal knowledge-base heuristics.
+An agentic AI market research project built with Streamlit, CrewAI, LangChain, and a local vector database. The app accepts a retail research query, runs a two-agent workflow, retrieves supporting memory from a Chroma vector store, and generates a polished market research report with downloads and visuals.
 
-The system is designed for academic demos, high-level design discussions, and collaborative report preparation. It combines a multi-agent workflow with a curated retail knowledge base to produce professional market research reports, downloadable text exports, and PDF-ready assets.
+## Live App
 
-## Overview
+- Streamlit deployment link: `ADD_YOUR_STREAMLIT_LINK_HERE`
+- Local app URL: `http://127.0.0.1:8501`
 
-The application accepts a retail research query, loads internal retail strategy documents from the `knowledge_base/` directory, and runs a sequential CrewAI workflow:
+## Final Project Highlights
 
-1. `Retail Researcher`
-   - Performs live web research using Serper.
-   - Identifies relevant retail trends, demand signals, category opportunities, and margin logic.
-   - Cross-references current findings against internal heuristics from the knowledge base.
-   - Distinguishes strong evidence from weak-signal sources.
+- Two-agent architecture:
+  - `Retail Researcher` gathers and compresses useful market evidence
+  - `Report Writer` converts that evidence into a stakeholder-ready report
+- Vector database integration using Chroma with persisted local storage in `vector_store/`
+- Knowledge base ingestion from `knowledge_base/`
+- Report persistence in `internal_repository/`
+- PDF export, TXT export, margin chart, and trend-alignment chart generation
+- Cleaner submission-ready UI with hidden runtime logging
+- Separate runtime log file stored locally in `app_runtime.log`
 
-2. `Report Writer`
-   - Converts the research findings into a structured market research report.
-   - Produces markdown output suitable for presentation, submission, and export.
-   - Supports comparison tables and report artifacts used for visualization and PDF export.
+## Architecture
 
-## Key Features
+### Agent 1: Retail Researcher
 
-- Multi-agent research pipeline using CrewAI
-- Shared `Knowledge_Store` built from files in `knowledge_base/`
-- Streamlit interface with query input, report display, and sidebar activity logs
-- Real-time retail research with Serper-backed web search
-- Structured markdown report generation
-- Report persistence through `StorageService`
-- TXT export for collaboration and PDF export support for formatted submissions
-- Optional generated visuals such as summary banners and charts based on report structure
+- Uses Serper-backed web research
+- Cross-references findings with the knowledge base
+- Uses vector retrieval as supporting memory
+- Produces a compact fact pack to keep downstream model usage efficient
+
+### Agent 2: Report Writer
+
+- Takes Agent 1's compact fact pack
+- Produces a structured market research report in Markdown
+- Supports comparison-table extraction for charts and export assets
+
+### Retrieval Layer
+
+- `knowledge_base/` stores curated retail strategy files
+- `vector_store/` stores the persisted Chroma vector database
+- `internal_repository/` stores generated report artifacts
 
 ## Tech Stack
 
@@ -36,168 +46,101 @@ The application accepts a retail research query, loads internal retail strategy 
 - Streamlit
 - CrewAI
 - LangChain
+- Chroma
 - Serper API
-- Google Gemini or OpenAI models via environment configuration
+- Groq / Gemini / OpenAI environment-driven model configuration
 - Matplotlib
 - ReportLab
-- PyPDF / LangChain document loaders
 
 ## Project Structure
 
 ```text
 Agentic AI Project/
-├── app.py
-├── README.md
-├── .env.example
-├── .gitignore
-├── requirements.txt
-├── knowledge_base/
-│   ├── retail_margin_framework.txt
-│   ├── retail_trends_2026.txt
-│   └── retail_tech_strategy.txt
-└── internal_repository/
+|-- app.py
+|-- README.md
+|-- requirements.txt
+|-- .env.example
+|-- .gitignore
+|-- run_app.bat
+|-- .streamlit/
+|   |-- config.toml
+|-- knowledge_base/
+|-- internal_repository/
+|-- vector_store/
+|   |-- .gitkeep
+|   |-- README.md
 ```
-
-## How It Works
-
-### 1. Knowledge Ingestion
-
-The application reads `.txt` and `.pdf` files from `knowledge_base/` using LangChain document loaders. These files are consolidated into a `KnowledgeStore` object containing:
-
-- target profit-margin heuristics
-- 2026 trend keywords
-- trusted research domains
-- source-quality evaluation rules
-
-This allows the agents to use internal retail frameworks as evaluation benchmarks rather than hard-coded constraints.
-
-### 2. Research Workflow
-
-The `Retail Researcher` first investigates live market conditions for the user query and then validates those findings against the knowledge base. The workflow is designed to:
-
-- prioritize real-world market evidence
-- preserve local or market-specific findings
-- avoid blindly copying the internal knowledge base
-- filter generic blogs and weak-signal sources
-
-### 3. Report Generation
-
-The `Report Writer` transforms the research notes into a professional market research report using markdown. Depending on the report structure returned, the application can also derive:
-
-- comparison tables
-- trend alignment charts
-- margin charts
-- PDF report assets
-
-### 4. Persistence
-
-The `StorageService` saves final markdown output to the `internal_repository/` directory using timestamped filenames. Additional generated assets such as charts and PDFs can also be stored there.
 
 ## Setup
 
-### 1. Clone or download the project
-
-```powershell
-git clone <your-repo-url>
-cd "Agentic AI Project"
-```
-
-### 2. Install dependencies
+### 1. Install dependencies
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-### 3. Configure environment variables
+### 2. Configure environment variables
 
-Copy `.env.example` to `.env` and add your API keys:
+Create a `.env` file from `.env.example` and set your keys.
+
+Example:
 
 ```env
-MODEL_PROVIDER=gemini
-MODEL_NAME=gemini-2.5-flash
+MODEL_PROVIDER=groq
+MODEL_NAME=llama-3.3-70b-versatile
+EMBEDDING_PROVIDER=gemini
 OPENAI_API_KEY=
 GOOGLE_API_KEY=
+GROQ_API_KEY=
 SERPER_API_KEY=
 ```
 
-Supported model configurations:
+Supported provider patterns in the current app:
 
-- `MODEL_PROVIDER=gemini` with `MODEL_NAME=gemini-2.5-flash`
-- `MODEL_PROVIDER=openai` with `MODEL_NAME=gpt-4o`
+- `MODEL_PROVIDER=groq`
+- `MODEL_PROVIDER=gemini`
+- `MODEL_PROVIDER=openai`
 
-### 4. Run the app
+## Run Locally
+
+### Option 1
 
 ```powershell
-streamlit run app.py
+python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8501
 ```
 
-The app will be available locally at:
+### Option 2
+
+Double-click:
 
 ```text
-http://localhost:8501
+run_app.bat
 ```
 
-## Example Use Case
+## How the App Works
 
-Sample query:
+1. The app loads curated retail knowledge from `knowledge_base/`.
+2. It checks or rebuilds the local vector database in `vector_store/` when needed.
+3. Agent 1 retrieves live market evidence and vector-memory support.
+4. Agent 2 writes the final market research report.
+5. The app saves report files and generated assets to `internal_repository/`.
 
-```text
-High-margin wellness trends for D2C brands in India
-```
+## Outputs
 
-The app will:
+- Market research report rendered in the app
+- Downloadable `.txt` report
+- Downloadable `.pdf` report
+- Opportunity comparison table
+- Margin chart
+- Trend alignment chart
 
-- search live market signals and retail sources
-- evaluate findings against retail margin and trend heuristics
-- generate a structured report for presentation or submission
-- save the final output for later retrieval
+## Deployment Note
 
-## Technologies Used
-
-### Streamlit
-
-Used to create the interactive interface, including:
-
-- query input
-- report rendering
-- download actions
-- sidebar activity logs
-
-### CrewAI
-
-Used to orchestrate the multi-agent workflow with sequential task execution.
-
-### LangChain
-
-Used for loading and preparing knowledge-base documents and supporting the knowledge-ingestion layer.
-
-### Serper API
-
-Used for web search and evidence gathering during live research.
-
-### Gemini / OpenAI
-
-Used as the underlying LLM provider for the retail research and report-writing agents.
-
-### Matplotlib and ReportLab
-
-Used for report visuals and PDF generation.
+When deploying to Streamlit Community Cloud, replace the placeholder live link above with your deployed app URL.
 
 ## Security Notes
 
-- Do not commit `.env` to GitHub.
-- Keep API keys private.
-- Share `.env.example` with collaborators instead of real credentials.
-- Generated reports inside `internal_repository/` may contain output from live research; review them before public submission.
-
-## Future Improvements
-
-- stronger deterministic report templates
-- richer charts and visual dashboards
-- improved PDF styling for submission-ready formatting
-- advanced source attribution and confidence scoring
-- optional retrieval-augmented search over a larger retail document set
-
-## License
-
-This project currently has no explicit license. Add one before public release if needed.
+- Do not commit `.env`
+- Do not commit real API keys
+- `app_runtime.log` is local-only and ignored from Git
+- generated vector database artifacts are ignored from Git, while the `vector_store/` folder remains visible for project structure review
