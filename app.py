@@ -495,7 +495,7 @@ class VectorDatabaseService:
         provider = os.getenv("MODEL_PROVIDER", "openai").strip().lower()
         if provider == "gemini":
             return GoogleGenerativeAIEmbeddings(
-                model="models/text-embedding-004",
+                model="models/gemini-embedding-001",
                 google_api_key=os.getenv("GOOGLE_API_KEY"),
             )
         return OpenAIEmbeddings(
