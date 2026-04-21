@@ -67,8 +67,8 @@ Agentic AI Project/
 |-- knowledge_base/
 |-- internal_repository/
 |-- vector_store/
-|   |-- .gitkeep
-|   |-- README.md
+|   |-- chroma.sqlite3
+|   |-- <chroma index files>
 ```
 
 ## Setup
@@ -143,4 +143,4 @@ When deploying to Streamlit Community Cloud, replace the placeholder live link a
 - Do not commit `.env`
 - Do not commit real API keys
 - `app_runtime.log` is local-only and ignored from Git
-- generated vector database artifacts are ignored from Git, while the `vector_store/` folder remains visible for project structure review
+- `vector_store/` now includes the committed Chroma database artifacts for project review
