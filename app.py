@@ -912,6 +912,62 @@ def remove_comparison_table_from_markdown(report_markdown: str) -> str:
     return cleaned_report
 
 
+def render_report_with_table(report_markdown: str, comparison_rows: List[ComparisonRow]) -> None:
+    cleaned_report = remove_comparison_table_from_markdown(report_markdown)
+    sections = parse_markdown_sections(cleaned_report)
+
+    if not sections:
+        st.markdown(cleaned_report)
+        if comparison_rows:
+            st.markdown("#### Opportunity Comparison")
+            st.table(
+                [
+                    {
+                        "Product Name": row.product_name,
+                        "Est. Margin": row.est_margin,
+                        "Trend Alignment": row.trend_alignment,
+                    }
+                    for row in comparison_rows
+                ]
+            )
+        return
+
+    inserted_table = False
+    for section_title, section_lines in sections:
+        if section_title != "Report":
+            st.markdown(f"## {section_title}")
+
+        section_body = "\n".join(section_lines).strip()
+        if section_body:
+            st.markdown(section_body)
+
+        if section_title.strip().lower() == "opportunity comparison" and comparison_rows:
+            st.table(
+                [
+                    {
+                        "Product Name": row.product_name,
+                        "Est. Margin": row.est_margin,
+                        "Trend Alignment": row.trend_alignment,
+                    }
+                    for row in comparison_rows
+                ]
+            )
+            inserted_table = True
+
+    if comparison_rows and not inserted_table:
+        st.markdown("## Opportunity Comparison")
+        st.table(
+            [
+                {
+                    "Product Name": row.product_name,
+                    "Est. Margin": row.est_margin,
+                    "Trend Alignment": row.trend_alignment,
+                }
+                for row in comparison_rows
+            ]
+        )
+
+
 def parse_markdown_sections(report_markdown: str) -> List[tuple[str, List[str]]]:
     sections: List[tuple[str, List[str]]] = []
     current_title = "Report"
@@ -1390,19 +1446,7 @@ def main() -> None:
 
         with report_tab:
             st.markdown("### Market Research Report")
-            report_without_embedded_table = remove_comparison_table_from_markdown(st.session_state.latest_report)
-            st.markdown(report_without_embedded_table)
-            if st.session_state.latest_comparison_rows:
-                st.markdown("#### Opportunity Comparison")
-                table_data = [
-                    {
-                        "Product Name": row.product_name,
-                        "Est. Margin": row.est_margin,
-                        "Trend Alignment": row.trend_alignment,
-                    }
-                    for row in st.session_state.latest_comparison_rows
-                ]
-                st.table(table_data)
+            render_report_with_table(st.session_state.latest_report, st.session_state.latest_comparison_rows)
 
         with visuals_tab:
             st.markdown("### Report Visuals")
