@@ -4,7 +4,7 @@ An agentic AI market research project built with Streamlit, CrewAI, LangChain, a
 
 ## Live App
 
-- Streamlit deployment link: `ADD_YOUR_STREAMLIT_LINK_HERE`
+- Streamlit deployment link: `https://autonomous-retail-research-agent-kcb9ujagpgvoaik4ngr67u.streamlit.app/`
 - Local app URL: `http://127.0.0.1:8501`
 
 ## Final Project Highlights
@@ -65,11 +65,21 @@ Agentic AI Project/
 |-- .streamlit/
 |   |-- config.toml
 |-- knowledge_base/
+|-- docs/
+|   |-- AAI Project Report.pdf
+|   |-- HLD_AAI.pdf
+|   |-- LLD AgenticAI Final.pdf
 |-- internal_repository/
 |-- vector_store/
 |   |-- chroma.sqlite3
 |   |-- <chroma index files>
 ```
+
+## Project Documents
+
+- `docs/AAI Project Report.pdf`
+- `docs/HLD_AAI.pdf`
+- `docs/LLD AgenticAI Final.pdf`
 
 ## Setup
 
@@ -133,10 +143,6 @@ run_app.bat
 - Opportunity comparison table
 - Margin chart
 - Trend alignment chart
-
-## Deployment Note
-
-When deploying to Streamlit Community Cloud, replace the placeholder live link above with your deployed app URL.
 
 ## Security Notes
 
