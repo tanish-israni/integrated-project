@@ -1319,15 +1319,6 @@ def main() -> None:
             st.info("Add knowledge files to knowledge_base so the agents can operate like experienced retail analysts.")
 
         st.divider()
-        st.subheader("Research Memory")
-        st.caption("Refresh the persisted vector database built from `knowledge_base` and saved reports.")
-        vector_file_count = len([path for path in VECTOR_STORE_DIR.rglob("*") if path.is_file()]) if VECTOR_STORE_DIR.exists() else 0
-        st.caption(f"Current vector database files: {vector_file_count}")
-        if st.button("Refresh Research Memory"):
-            vector_service.rebuild(logger)
-            logger.write("Research memory refresh completed.")
-
-        st.divider()
         st.subheader("Stored Reports")
         saved_reports = sorted(INTERNAL_REPOSITORY_DIR.glob("retail_report_*.txt"), reverse=True)
         if saved_reports:
