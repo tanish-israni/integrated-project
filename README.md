@@ -3,7 +3,12 @@
 This repository now hosts one integrated Streamlit application with:
 - Agentic AI retail report generation (2-agent workflow)
 - Generative AI hospitality concept creator (text + image)
-- DevOps-ready deployment assets (Docker + Kubernetes for AWS)
+- DevOps-ready deployment assets (Docker + Kubernetes + AWS)
+
+Deployment stack used in this integrated project:
+- Docker (containerization)
+- Kubernetes (orchestration and service exposure)
+- AWS (cloud hosting and deployment target, including EC2/ECR and EKS-based workflow)
 
 ## App Modules
 
@@ -55,6 +60,9 @@ This repository now hosts one integrated Streamlit application with:
 - Groq / Gemini / OpenAI environment-driven model configuration
 - Matplotlib
 - ReportLab
+- Docker
+- Kubernetes
+- AWS (EC2, ECR, EKS workflow)
 
 ## Project Structure
 
