@@ -1,9 +1,10 @@
 import os
+import base64
 
 import requests
 import streamlit as st
 
-from config.config import HF_API_URL
+from config.config import HF_API_URL, HF_MODEL
 
 
 def _get_huggingface_api_key() -> str | None:
@@ -21,17 +22,34 @@ def generate_image(prompt: str) -> bytes:
         response = requests.post(
             HF_API_URL,
             headers=headers,
-            json={"inputs": prompt},
-            timeout=120,
+            json={
+                "model": HF_MODEL,
+                "prompt": prompt,
+                "size": "1024x1024",
+            },
+            timeout=180,
         )
     except requests.exceptions.RequestException as exc:
         raise RuntimeError(f"Hugging Face API error: {exc}") from exc
 
-    if response.status_code != 200:
+    if response.status_code not in (200, 201):
         try:
             details = response.json()
         except ValueError:
             details = response.text
         raise RuntimeError(f"Hugging Face API error: {details}")
 
-    return response.content
+    payload = response.json()
+    data = payload.get("data", [])
+    if not data:
+        raise RuntimeError(f"Hugging Face API error: unexpected response: {payload}")
+
+    first = data[0]
+    if "b64_json" in first:
+        return base64.b64decode(first["b64_json"])
+    if "url" in first:
+        image_response = requests.get(first["url"], timeout=60)
+        image_response.raise_for_status()
+        return image_response.content
+
+    raise RuntimeError(f"Hugging Face API error: unsupported response format: {payload}")
