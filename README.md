@@ -9,6 +9,7 @@ This repository now hosts one integrated Streamlit application with:
 
 - Main page (`app.py`): Agentic retail research workflow
 - Streamlit page (`pages/2_Hospitality_GenAI.py`): Hospitality concept generator
+- Shared hospitality backend module (`src/genai_module/`)
 
 ## Final Project Highlights
 
@@ -58,24 +59,28 @@ This repository now hosts one integrated Streamlit application with:
 ## Project Structure
 
 ```text
-Agentic AI Project/
+integrated-project/
 |-- app.py
-|-- README.md
+|-- pages/
+|   |-- 2_Hospitality_GenAI.py
+|-- src/
+|   |-- genai_module/
+|   |   |-- config/
+|   |   |-- database/
+|   |   |-- services/
+|   |   |-- utils/
+|-- k8s/
+|   |-- deployment.yaml
+|   |-- service.yaml
+|-- legacy/
+|   |-- devops_fastapi_demo/
+|-- knowledge_base/
+|-- vector_store/
+|-- internal_repository/
+|-- docs/
+|-- Dockerfile
 |-- requirements.txt
 |-- .env.example
-|-- .gitignore
-|-- run_app.bat
-|-- .streamlit/
-|   |-- config.toml
-|-- knowledge_base/
-|-- docs/
-|   |-- AAI Project Report.pdf
-|   |-- HLD_AAI.pdf
-|   |-- LLD AgenticAI Final.pdf
-|-- internal_repository/
-|-- vector_store/
-|   |-- chroma.sqlite3
-|   |-- <chroma index files>
 ```
 
 ## Project Documents
@@ -115,7 +120,7 @@ Supported provider patterns in the current app:
 - `MODEL_PROVIDER=openai`
 
 Hospitality module keys:
-- `GEMINI_API_KEY`
+- `GROQ_API_KEY`
 - `HUGGINGFACE_API_KEY`
 
 ## Run Locally

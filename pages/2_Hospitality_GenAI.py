@@ -5,7 +5,7 @@ from uuid import uuid4
 import streamlit as st
 
 
-GENAI_ROOT = Path(__file__).resolve().parent.parent / "integrated" / "genai_module"
+GENAI_ROOT = Path(__file__).resolve().parent.parent / "src" / "genai_module"
 if str(GENAI_ROOT) not in sys.path:
     sys.path.insert(0, str(GENAI_ROOT))
 
