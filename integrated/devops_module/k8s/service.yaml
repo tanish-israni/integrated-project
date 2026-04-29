@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hospitality-api
+  labels:
+    app: hospitality-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: hospitality-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000

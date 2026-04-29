@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxury Hospitality Booking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-hotel"></i>
+          <h1>Luxury Stays</h1>
+        </div>
+        <p class="tagline">Premium Room Booking</p>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Hero Section -->
+      <section class="hero">
+        <h2>Your Perfect Stay Awaits</h2>
+        <p>Book luxury rooms with exceptional service</p>
+      </section>
+
+      <!-- Room Cards Section -->
+      <div class="rooms-grid">
+        <div class="room-card">
+          <div class="room-icon standard">
+            <i class="fas fa-bed"></i>
+          </div>
+          <h3>Standard Room</h3>
+          <p class="subtitle">Comfortable & Convenient</p>
+          <div class="amenities-list">
+            <span><i class="fas fa-wifi"></i> WiFi</span>
+            <span><i class="fas fa-tv"></i> Smart TV</span>
+            <span><i class="fas fa-shower"></i> Shower</span>
+          </div>
+          <div class="availability" id="standardAvail">
+            <span class="badge loading"><i class="fas fa-spinner fa-spin"></i> Checking...</span>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <div class="room-icon deluxe">
+            <i class="fas fa-crown"></i>
+          </div>
+          <h3>Deluxe Room</h3>
+          <p class="subtitle">Premium Luxury</p>
+          <div class="amenities-list">
+            <span><i class="fas fa-wifi"></i> WiFi</span>
+            <span><i class="fas fa-bath"></i> Jacuzzi</span>
+            <span><i class="fas fa-concierge-bell"></i> Concierge</span>
+          </div>
+          <div class="availability" id="deluxeAvail">
+            <span class="badge loading"><i class="fas fa-spinner fa-spin"></i> Checking...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Check Availability -->
+        <section class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-search"></i> Check Availability</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Room Type</label>
+              <select id="roomTypeCheck" onchange="checkAvailability()">
+                <option value="standard">Standard Room</option>
+                <option value="deluxe">Deluxe Room</option>
+              </select>
+            </div>
+            <div id="availabilityResult"></div>
+          </div>
+        </section>
+
+        <!-- Book Room -->
+        <section class="card">
+          <div class="card-header">
+            <h2><i class="fas fa-calendar-check"></i> Book Now</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Room Type</label>
+              <select id="roomTypeBook">
+                <option value="standard">Standard Room</option>
+                <option value="deluxe">Deluxe Room</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Number of Nights</label>
+              <input type="number" id="nights" min="1" max="30" value="1">
+            </div>
+
+            <button class="btn" onclick="bookRoom()">
+              <i class="fas fa-check"></i> Book Room
+            </button>
+
+            <div id="bookingResult"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Status -->
+      <div class="status">
+        <span class="status-dot" id="status"></span>
+        <span id="statusText">Ready</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Luxury Stays &copy; 2024. Premium Hospitality Services.</p>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+
+

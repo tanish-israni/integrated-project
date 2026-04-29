@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospitality-api
+  labels:
+    app: hospitality-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospitality-api
+  template:
+    metadata:
+      labels:
+        app: hospitality-api
+    spec:
+      containers:
+        - name: hospitality-api
+          image: 141130499200.dkr.ecr.ap-south-1.amazonaws.com/integrated-streamlit-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8501
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          env:
+            - name: MODEL_PROVIDER
+              value: "gemini"
+            - name: MODEL_NAME
+              value: "gemini-2.5-flash"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: integrated-app-secrets
+                  key: OPENAI_API_KEY
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: integrated-app-secrets
+                  key: GOOGLE_API_KEY
+            - name: SERPER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: integrated-app-secrets
+                  key: SERPER_API_KEY
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: integrated-app-secrets
+                  key: GEMINI_API_KEY
+            - name: HUGGINGFACE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: integrated-app-secrets
+                  key: HUGGINGFACE_API_KEY
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "384Mi"

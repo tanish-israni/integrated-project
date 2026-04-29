@@ -1,11 +1,14 @@
-# Retail Research Agent
+# Integrated Hospitality + Retail AI Suite
 
-An agentic AI market research project built with Streamlit, CrewAI, LangChain, and a local vector database. The app accepts a retail research query, runs a two-agent workflow, retrieves supporting memory from a Chroma vector store, and generates a polished market research report with downloads and visuals.
+This repository now hosts one integrated Streamlit application with:
+- Agentic AI retail report generation (2-agent workflow)
+- Generative AI hospitality concept creator (text + image)
+- DevOps-ready deployment assets (Docker + Kubernetes for AWS)
 
-## Live App
+## App Modules
 
-- Streamlit deployment link: `https://autonomous-retail-research-agent-kcb9ujagpgvoaik4ngr67u.streamlit.app/`
-- Local app URL: `http://127.0.0.1:8501`
+- Main page (`app.py`): Agentic retail research workflow
+- Streamlit page (`pages/2_Hospitality_GenAI.py`): Hospitality concept generator
 
 ## Final Project Highlights
 
@@ -111,6 +114,10 @@ Supported provider patterns in the current app:
 - `MODEL_PROVIDER=gemini`
 - `MODEL_PROVIDER=openai`
 
+Hospitality module keys:
+- `GEMINI_API_KEY`
+- `HUGGINGFACE_API_KEY`
+
 ## Run Locally
 
 ### Option 1
@@ -125,6 +132,32 @@ Double-click:
 
 ```text
 run_app.bat
+```
+
+## AWS Deploy (Docker + Kubernetes)
+
+1. Build and push image:
+```powershell
+docker build -t <dockerhub-user>/integrated-streamlit-app:latest .
+docker push <dockerhub-user>/integrated-streamlit-app:latest
+```
+
+2. Update image name in `k8s/deployment.yaml`.
+
+3. Create secret:
+```powershell
+kubectl create secret generic integrated-app-secrets `
+  --from-literal=OPENAI_API_KEY="..." `
+  --from-literal=GOOGLE_API_KEY="..." `
+  --from-literal=SERPER_API_KEY="..." `
+  --from-literal=GEMINI_API_KEY="..." `
+  --from-literal=HUGGINGFACE_API_KEY="..."
+```
+
+4. Deploy:
+```powershell
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
 ```
 
 ## How the App Works
