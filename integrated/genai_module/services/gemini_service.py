@@ -1,21 +1,23 @@
 import os
 
 import streamlit as st
-from google import genai
+from openai import OpenAI
 
-from config.config import GEMINI_MODEL
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+DEFAULT_GROQ_MODEL = "llama-3.1-8b-instant"
 
 
-def _get_gemini_api_key() -> str | None:
-    return os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
+def _get_groq_api_key() -> str | None:
+    return os.getenv("GROQ_API_KEY") or st.secrets.get("GROQ_API_KEY")
 
 
 def generate_text(prompt: str, retrieved_context: list[dict] | None = None) -> str:
-    api_key = _get_gemini_api_key()
+    api_key = _get_groq_api_key()
     if not api_key:
-        raise ValueError("Missing GEMINI_API_KEY.")
+        raise ValueError("Missing GROQ_API_KEY.")
 
-    client = genai.Client(api_key=api_key)
+    client = OpenAI(api_key=api_key, base_url=GROQ_BASE_URL)
+    model_name = os.getenv("GROQ_MODEL", DEFAULT_GROQ_MODEL)
     context_section = ""
 
     if retrieved_context:
@@ -40,15 +42,26 @@ def generate_text(prompt: str, retrieved_context: list[dict] | None = None) -> s
         request_text = f"{context_section}\n\n{request_text}"
 
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=request_text,
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a hospitality concept writer. Provide short, vivid, practical concept text."
+                    ),
+                },
+                {"role": "user", "content": request_text},
+            ],
+            temperature=0.7,
         )
     except Exception as exc:
-        raise RuntimeError(f"Gemini API error: {exc}") from exc
+        raise RuntimeError(f"Groq API error: {exc}") from exc
 
-    text = getattr(response, "text", "")
+    text = ""
+    if response.choices and response.choices[0].message:
+        text = response.choices[0].message.content or ""
     if not text or not text.strip():
-        raise RuntimeError("Gemini returned an empty response.")
+        raise RuntimeError("Groq returned an empty response.")
 
     return text.strip()
